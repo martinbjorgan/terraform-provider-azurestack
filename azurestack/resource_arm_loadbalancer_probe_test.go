@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -21,7 +21,7 @@ func TestAccAzureStackLoadBalancerProbe_basic(t *testing.T) {
 		"/subscriptions/%s/resourceGroups/acctestRG-%d/providers/Microsoft.Network/loadBalancers/arm-test-loadbalancer-%d/probes/%s",
 		subscriptionID, ri, ri, probeName)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -50,7 +50,7 @@ func TestAccAzureStackLoadBalancerProbe_removal(t *testing.T) {
 	probeName := fmt.Sprintf("probe-%d", ri)
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -79,7 +79,7 @@ func TestAccAzureStackLoadBalancerProbe_update(t *testing.T) {
 	probeName := fmt.Sprintf("probe-%d", ri)
 	probe2Name := fmt.Sprintf("probe-%d", acctest.RandInt())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -111,7 +111,7 @@ func TestAccAzureStackLoadBalancerProbe_updateProtocol(t *testing.T) {
 	ri := acctest.RandInt()
 	probeName := fmt.Sprintf("probe-%d", ri)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -136,46 +136,12 @@ func TestAccAzureStackLoadBalancerProbe_updateProtocol(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackLoadBalancerProbe_reapply(t *testing.T) {
-	var lb network.LoadBalancer
-	ri := acctest.RandInt()
-	probeName := fmt.Sprintf("probe-%d", ri)
-
-	deleteProbeState := func(s *terraform.State) error {
-		return s.Remove("azurestack_lb_probe.test")
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackLoadBalancerProbe_basic(ri, probeName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerProbeExists(probeName, &lb),
-					deleteProbeState,
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccAzureStackLoadBalancerProbe_basic(ri, probeName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerProbeExists(probeName, &lb),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackLoadBalancerProbe_disappears(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()
 	probeName := fmt.Sprintf("probe-%d", ri)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,

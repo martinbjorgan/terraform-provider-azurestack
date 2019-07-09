@@ -16,7 +16,7 @@ func TestAccAzureStackDnsARecord_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackDnsARecord_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackDnsARecordDestroy,
@@ -38,7 +38,7 @@ func TestAccAzureStackDnsARecord_updateRecords(t *testing.T) {
 	preConfig := testAccAzureStackDnsARecord_basic(ri, location)
 	postConfig := testAccAzureStackDnsARecord_updateRecords(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackDnsARecordDestroy,
@@ -68,7 +68,7 @@ func TestAccAzureStackDnsARecord_withTags(t *testing.T) {
 	preConfig := testAccAzureStackDnsARecord_withTags(ri, location)
 	postConfig := testAccAzureStackDnsARecord_withTagsUpdate(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackDnsARecordDestroy,
@@ -213,7 +213,7 @@ resource "azurestack_dns_a_record" "test" {
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -240,7 +240,7 @@ resource "azurestack_dns_a_record" "test" {
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

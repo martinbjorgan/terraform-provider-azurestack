@@ -18,7 +18,7 @@ func TestAccAzureStackVirtualMachineExtension_basic(t *testing.T) {
 	preConfig := testAccAzureStackVirtualMachineExtension_basic(ri, location)
 	postConfig := testAccAzureStackVirtualMachineExtension_basicUpdate(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineExtensionDestroy,
@@ -47,7 +47,7 @@ func TestAccAzureStackVirtualMachineExtension_concurrent(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineExtension_concurrent(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineExtensionDestroy,
@@ -73,7 +73,7 @@ func TestAccAzureStackVirtualMachineExtension_linuxDiagnostics(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineExtension_linuxDiagnostics(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineExtensionDestroy,
@@ -183,7 +183,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -242,7 +242,7 @@ resource "azurestack_virtual_machine_extension" "test" {
 	}
 SETTINGS
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -289,7 +289,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -348,7 +348,7 @@ resource "azurestack_virtual_machine_extension" "test" {
 	}
 SETTINGS
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -396,7 +396,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -514,7 +514,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -574,7 +574,7 @@ resource "azurestack_virtual_machine_extension" "test" {
 	}
 SETTINGS
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }

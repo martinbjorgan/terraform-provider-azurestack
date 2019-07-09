@@ -5,7 +5,7 @@ import (
 
 	"bytes"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
+	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -199,7 +199,7 @@ func dataSourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interfa
 			return fmt.Errorf("Virtual Network Gateway %q (Resource Group %q) was not found", name, resGroup)
 		}
 
-		return fmt.Errorf("Error making Read request on AzureRM Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Error making Read request on AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.SetId(*resp.ID)

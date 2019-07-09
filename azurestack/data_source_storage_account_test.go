@@ -16,7 +16,7 @@ func TestAccDataSourceAzureStackStorageAccount_basic(t *testing.T) {
 	preConfig := testAccDataSourceAzureStackStorageAccount_basic(ri, rs, location)
 	config := testAccDataSourceAzureStackStorageAccount_basicWithDataSource(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -52,7 +52,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }

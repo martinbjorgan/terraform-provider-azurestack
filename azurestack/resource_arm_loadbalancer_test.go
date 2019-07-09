@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -51,7 +51,7 @@ func TestAccAzureStackLoadBalancer_basic(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -70,7 +70,7 @@ func TestAccAzureStackLoadBalancer_standard(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -91,7 +91,7 @@ func TestAccAzureStackLoadBalancer_frontEndConfig(t *testing.T) {
 	ri := acctest.RandInt()
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -127,7 +127,7 @@ func TestAccAzureStackLoadBalancer_tags(t *testing.T) {
 	ri := acctest.RandInt()
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -222,7 +222,7 @@ resource "azurestack_lb" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     Environment = "production"
     Purpose     = "AcceptanceTests"
   }
@@ -242,7 +242,7 @@ resource "azurestack_lb" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     Environment = "production"
     Purpose     = "AcceptanceTests"
   }
@@ -262,7 +262,7 @@ resource "azurestack_lb" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     Purpose = "AcceptanceTests"
   }
 }

@@ -2,88 +2,20 @@ package azurestack
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
 )
-
-func init() {
-	resource.AddTestSweepers("azurestack_virtual_network", &resource.Sweeper{
-		Name: "azurestack_virtual_network",
-		F:    testSweepVirtualNetworks,
-		Dependencies: []string{
-			"azurestack_application_gateway",
-			"azurestack_subnet",
-			"azurestack_network_interface",
-			"azurestack_virtual_machine",
-		},
-	})
-}
-
-func testSweepVirtualNetworks(region string) error {
-	armClient, err := buildConfigForSweepers()
-	if err != nil {
-		return err
-	}
-
-	client := (*armClient).vnetClient
-	ctx := (*armClient).StopContext
-
-	log.Printf("Retrieving the Virtual Networks..")
-	results, err := client.ListAll(ctx)
-	if err != nil {
-		return fmt.Errorf("Error Listing on Virtual Networks: %+v", err)
-	}
-
-	for _, network := range results.Values() {
-		id, err := parseAzureResourceID(*network.ID)
-		if err != nil {
-			return fmt.Errorf("Error parsing Azure Resource ID %q", id)
-		}
-
-		resourceGroupName := id.ResourceGroup
-		name := *network.Name
-		location := *network.Location
-
-		if !shouldSweepAcceptanceTestResource(name, location, region) {
-			continue
-		}
-
-		log.Printf("Deleting Virtual Network %q", name)
-		future, err := client.Delete(ctx, resourceGroupName, name)
-		if err != nil {
-			if response.WasNotFound(future.Response()) {
-				continue
-			}
-
-			return err
-		}
-
-		err = future.WaitForCompletionRef(ctx, client.Client)
-		if err != nil {
-			if response.WasNotFound(future.Response()) {
-				continue
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
 
 func TestAccAzureStackVirtualNetwork_basic(t *testing.T) {
 	resourceName := "azurestack_virtual_network.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetwork_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
@@ -108,7 +40,7 @@ func TestAccAzureStackVirtualNetwork_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetwork_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
@@ -132,7 +64,7 @@ func TestAccAzureStackVirtualNetwork_withTags(t *testing.T) {
 	preConfig := testAccAzureStackVirtualNetwork_withTags(ri, location)
 	postConfig := testAccAzureStackVirtualNetwork_withTagsUpdated(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
@@ -172,7 +104,7 @@ func TestAccAzureStackVirtualNetwork_bug373(t *testing.T) {
 	rs := acctest.RandString(6)
 	config := testAccAzureStackVirtualNetwork_bug373(rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
@@ -315,7 +247,7 @@ resource "azurestack_virtual_network" "test" {
     address_prefix = "10.0.1.0/24"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -341,7 +273,7 @@ resource "azurestack_virtual_network" "test" {
     address_prefix = "10.0.1.0/24"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -369,7 +301,7 @@ resource "azurestack_virtual_network" "test" {
   address_space       = ["${var.network_cidr}"]
   location            = "${azurestack_resource_group.test.location}"
 
-  tags {
+  tags = {
     environment = "${var.environment}"
   }
 }
@@ -407,7 +339,7 @@ resource "azurestack_network_security_group" "test" {
     destination_address_prefix = "*"
   }
 
-  tags {
+  tags = {
     environment = "${var.environment}"
   }
 }

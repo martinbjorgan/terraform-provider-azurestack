@@ -43,7 +43,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -125,6 +125,7 @@ The following arguments are supported:
 * `os_profile_linux_config` - (Required, when a linux machine) A Linux config block as documented below.
 * `network_profile` - (Required) A collection of network profile block as documented below.
 * `storage_profile_os_disk` - (Required) A storage profile os disk block as documented below
+* `storage_profile_data_disk` - (Optional) A storage profile data disk block as documented below
 * `storage_profile_image_reference` - (Optional) A storage profile image reference block as documented below.
 * `extension` - (Optional) Can be specified multiple times to add extension profiles to the scale set. Each `extension` block supports the fields documented below.
 * `plan` - (Optional) A plan block as documented below.
@@ -170,6 +171,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   output "principal_id" {
     value = "${lookup(azurestack_virtual_machine.test.identity[0], "principal_id")}"
   }
+}
 ```
 
 `os_profile` supports the following:
@@ -281,21 +283,23 @@ machine scale set, as in the [example below](#example-of-storage_profile_image_r
 ## Example of storage_profile_image_reference with id
 
 ```hcl
-
 resource "azurestack_image" "test" {
-	name = "test"
-  ...
+  name = "test"
+
+  #...
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-	name = "test"
-  ...
+  name = "test"
 
-	storage_profile_image_reference {
-		id = "${azurestack_image.test.id}"
-	}
+  #...
 
-...
+  storage_profile_image_reference {
+    id = "${azurestack_image.test.id}"
+  }
+
+  #...
+}
 ```
 
 ## Attributes Reference

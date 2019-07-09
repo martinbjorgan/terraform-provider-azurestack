@@ -14,7 +14,7 @@ import (
 func TestAccAzureStackTemplateDeployment_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_basicMultiple(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackTemplateDeploymentDestroy,
@@ -32,7 +32,7 @@ func TestAccAzureStackTemplateDeployment_basic(t *testing.T) {
 func TestAccAzureStackTemplateDeployment_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_basicSingle(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackTemplateDeploymentDestroy,
@@ -53,7 +53,7 @@ func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
 
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withParams(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackTemplateDeploymentDestroy,
@@ -73,7 +73,7 @@ func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
 
 	ri := acctest.RandInt()
 	config := testaccAzureStackTemplateDeployment_withParamsBody(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackTemplateDeploymentDestroy,
@@ -94,7 +94,7 @@ func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withOutputs(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackTemplateDeploymentDestroy,
@@ -105,8 +105,8 @@ func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 					testCheckAzureStackTemplateDeploymentExists("azurestack_template_deployment.test"),
 					resource.TestCheckOutput("tfIntOutput", "-123"),
 					resource.TestCheckOutput("tfStringOutput", "Standard_LRS"),
-					resource.TestCheckOutput("tfFalseOutput", "0"),
-					resource.TestCheckOutput("tfTrueOutput", "1"),
+					resource.TestCheckOutput("tfFalseOutput", "false"),
+					resource.TestCheckOutput("tfTrueOutput", "true"),
 					resource.TestCheckResourceAttr("azurestack_template_deployment.test", "outputs.stringOutput", "Standard_LRS"),
 				),
 			},
@@ -117,7 +117,7 @@ func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 func TestAccAzureStackTemplateDeployment_withError(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withError(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackTemplateDeploymentDestroy,
@@ -344,7 +344,7 @@ resource "azurestack_storage_container" "using-outputs" {
 data "azurestack_client_config" "current" {}
 
 locals {
-  "templated-file" = <<TPL
+  templated-file = <<TPL
 {
 "dnsLabelPrefix": {
 	"value": "terraform-test-%d"
@@ -523,7 +523,7 @@ resource "azurestack_template_deployment" "test" {
 }
 DEPLOY
 
-  parameters {
+  parameters = {
     dnsLabelPrefix     = "terraform-test-%d"
     storageAccountType = "Standard_LRS"
   }
@@ -647,7 +647,7 @@ resource "azurestack_template_deployment" "test" {
 }
 DEPLOY
 
-  parameters {
+  parameters = {
     dnsLabelPrefix     = "terraform-test-%d"
     storageAccountType = "Standard_LRS"
   }
@@ -716,7 +716,7 @@ resource "azurestack_template_deployment" "test" {
 }
 DEPLOY
 
-  parameters {
+  parameters = {
     storageAccountType = "Standard_GRS"
   }
 

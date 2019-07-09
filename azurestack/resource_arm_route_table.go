@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
@@ -37,9 +37,10 @@ func resourceArmRouteTable() *schema.Resource {
 			"resource_group_name": resourceGroupNameSchema(),
 
 			"route": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Computed: true,
+				Type:       schema.TypeList,
+				Optional:   true,
+				Computed:   true,
+				ConfigMode: schema.SchemaConfigModeAttr,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -93,7 +94,7 @@ func resourceArmRouteTableCreateUpdate(d *schema.ResourceData, meta interface{})
 	client := meta.(*ArmClient).routeTablesClient
 	ctx := meta.(*ArmClient).StopContext
 
-	log.Printf("[INFO] preparing arguments for AzureRM Route Table creation.")
+	log.Printf("[INFO] preparing arguments for AzureStack Route Table creation.")
 
 	name := d.Get("name").(string)
 	location := azureStackNormalizeLocation(d.Get("location").(string))

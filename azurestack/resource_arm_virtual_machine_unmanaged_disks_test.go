@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/compute/mgmt/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -16,7 +16,7 @@ func TestAccAzureStackVirtualMachine_basicLinuxMachine(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -46,7 +46,7 @@ func TestAccAzureStackVirtualMachine_basicLinuxMachine_storageBlob_attach(t *tes
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, testLocation())
 	prepConfig := testAccAzureStackVirtualMachine_basicLinuxMachine_destroyVM(ri, testLocation())
 	config := testAccAzureStackVirtualMachine_basicLinuxMachine_storageBlob_attach(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -76,7 +76,7 @@ func TestAccAzureStackVirtualMachine_basicLinuxMachineSSHOnly(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_basicLinuxMachineSSHOnly(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -95,7 +95,7 @@ func TestAccAzureStackVirtualMachine_basicLinuxMachine_disappears(t *testing.T) 
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -117,7 +117,7 @@ func TestAccAzureStackVirtualMachine_withDataDisk(t *testing.T) {
 
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_withDataDisk(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -140,7 +140,7 @@ func TestAccAzureStackVirtualMachine_tags(t *testing.T) {
 	location := testLocation()
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, location)
 	postConfig := testAccAzureStackVirtualMachine_basicLinuxMachineUpdated(ri, location)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -177,7 +177,7 @@ func TestAccAzureStackVirtualMachine_updateMachineSize(t *testing.T) {
 	location := testLocation()
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, location)
 	postConfig := testAccAzureStackVirtualMachine_updatedLinuxMachine(ri, location)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -204,7 +204,7 @@ func TestAccAzureStackVirtualMachine_basicWindowsMachine(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_basicWindowsMachine(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -223,7 +223,7 @@ func TestAccAzureStackVirtualMachine_windowsUnattendedConfig(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_windowsUnattendedConfig(ri, testLocation(), "Standard_D1_v2")
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -243,7 +243,7 @@ func TestAccAzureStackVirtualMachine_windowsMachineResize(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_windowsUnattendedConfig(ri, testLocation(), "Standard_D1_v2")
 	postConfig := testAccAzureStackVirtualMachine_windowsUnattendedConfig(ri, testLocation(), "Standard_D2_v2")
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -268,7 +268,7 @@ func TestAccAzureStackVirtualMachine_diagnosticsProfile(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_diagnosticsProfile(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -287,7 +287,7 @@ func TestAccAzureStackVirtualMachine_winRMConfig(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_winRMConfig(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -307,7 +307,7 @@ func TestAccAzureStackVirtualMachine_deleteVHDOptOut(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_withDataDisk(ri, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_basicLinuxMachineDeleteVM(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -334,7 +334,7 @@ func TestAccAzureStackVirtualMachine_deleteVHDOptIn(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachineDestroyDisksBefore(ri, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_basicLinuxMachineDestroyDisksAfter(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -362,7 +362,7 @@ func TestAccAzureStackVirtualMachine_ChangeComputerName(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_machineNameBeforeUpdate(ri, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_updateMachineName(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -396,7 +396,7 @@ func TestAccAzureStackVirtualMachine_ChangeAvailabilitySet(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_withAvailabilitySet(ri, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_updateAvailabilitySet(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -426,7 +426,7 @@ func TestAccAzureStackVirtualMachine_changeStorageImageReference(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachineStorageImageBefore(ri, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_basicLinuxMachineStorageImageAfter(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -456,7 +456,7 @@ func TestAccAzureStackVirtualMachine_changeOSDiskVhdUri(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_basicLinuxMachineWithOSDiskVhdUriChanged(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -490,7 +490,7 @@ func TestAccAzureStackVirtualMachine_plan(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_plan(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -510,7 +510,7 @@ func TestAccAzureStackVirtualMachine_changeSSHKey(t *testing.T) {
 	rs := strings.ToLower(acctest.RandString(10))
 	preConfig := testAccAzureStackVirtualMachine_linuxMachineWithSSH(rs, testLocation())
 	postConfig := testAccAzureStackVirtualMachine_linuxMachineWithSSHRemoved(rs, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -539,7 +539,7 @@ func TestAccAzureStackVirtualMachine_optionalOSProfile(t *testing.T) {
 	preConfig := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, location)
 	prepConfig := testAccAzureStackVirtualMachine_basicLinuxMachine_destroy(ri, location)
 	config := testAccAzureStackVirtualMachine_basicLinuxMachine_attach_without_osProfile(ri, location)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -572,7 +572,7 @@ func TestAccAzureStackVirtualMachine_primaryNetworkInterfaceId(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_primaryNetworkInterfaceId(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
@@ -627,7 +627,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -671,7 +671,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -719,7 +719,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -774,7 +774,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -837,7 +837,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -884,7 +884,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -932,7 +932,7 @@ resource "azurestack_virtual_machine" "test" {
     }
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -980,7 +980,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1024,7 +1024,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -1077,7 +1077,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1132,7 +1132,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -1185,7 +1185,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1239,7 +1239,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1293,7 +1293,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1345,7 +1345,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -1393,7 +1393,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1436,7 +1436,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -1483,7 +1483,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1569,7 +1569,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1591,7 +1591,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2016-Datacenter"
     version   = "latest"
   }
 
@@ -1656,7 +1656,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1678,7 +1678,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2016-Datacenter"
     version   = "latest"
   }
 
@@ -1749,7 +1749,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1771,7 +1771,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2016-Datacenter"
     version   = "latest"
   }
 
@@ -1842,7 +1842,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1864,7 +1864,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2016-Datacenter"
     version   = "latest"
   }
 
@@ -1930,7 +1930,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2024,7 +2024,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2118,7 +2118,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2205,7 +2205,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2250,7 +2250,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -2298,7 +2298,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2343,7 +2343,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -2391,7 +2391,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2435,7 +2435,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -2483,7 +2483,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2533,7 +2533,7 @@ resource "azurestack_virtual_machine" "test" {
     product   = "vlm-azure"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -2764,7 +2764,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2809,7 +2809,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }
@@ -2857,7 +2857,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2911,7 +2911,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -2938,7 +2938,7 @@ resource "azurestack_virtual_machine" "test" {
     create_option = "Attach"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost-center = "Ops"
   }

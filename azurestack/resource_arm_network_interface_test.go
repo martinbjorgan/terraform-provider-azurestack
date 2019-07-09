@@ -4,82 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"log"
-
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
-
-func init() {
-	resource.AddTestSweepers("azurestack_network_interface", &resource.Sweeper{
-		Name: "azurestack_network_interface",
-		F:    testSweepNetworkInterfaces,
-		Dependencies: []string{
-			"azurestack_application_gateway",
-			"azurestack_virtual_machine",
-		},
-	})
-}
-
-func testSweepNetworkInterfaces(region string) error {
-	armClient, err := buildConfigForSweepers()
-	if err != nil {
-		return err
-	}
-
-	client := (*armClient).ifaceClient
-	ctx := (*armClient).StopContext
-
-	log.Printf("Retrieving the Network Interfaces..")
-	results, err := client.ListAll(ctx)
-	if err != nil {
-		return fmt.Errorf("Error Listing on Network Interfaces: %+v", err)
-	}
-
-	for _, network := range results.Values() {
-		id, err := parseAzureResourceID(*network.ID)
-		if err != nil {
-			return fmt.Errorf("Error parsing Azure Resource ID %q", id)
-		}
-
-		resourceGroupName := id.ResourceGroup
-		name := *network.Name
-		location := *network.Location
-
-		if !shouldSweepAcceptanceTestResource(name, location, region) {
-			continue
-		}
-
-		log.Printf("Deleting Network Interfaces %q", name)
-		future, err := client.Delete(ctx, resourceGroupName, name)
-		if err != nil {
-			if response.WasNotFound(future.Response()) {
-				continue
-			}
-
-			return err
-		}
-
-		err = future.WaitForCompletionRef(ctx, client.Client)
-		if err != nil {
-			if response.WasNotFound(future.Response()) {
-				continue
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
 
 func TestAccAzureStackNetworkInterface_basic(t *testing.T) {
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -102,7 +36,7 @@ func TestAccAzureStackNetworkInterface_basic(t *testing.T) {
 func TestAccAzureStackNetworkInterface_disappears(t *testing.T) {
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -126,7 +60,7 @@ func TestAccAzureStackNetworkInterface_setNetworkSecurityGroupId(t *testing.T) {
 	config := testAccAzureStackNetworkInterface_basic(rInt, location)
 	updatedConfig := testAccAzureStackNetworkInterface_basicWithNetworkSecurityGroup(rInt, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -155,7 +89,7 @@ func TestAccAzureStackNetworkInterface_removeNetworkSecurityGroupId(t *testing.T
 	config := testAccAzureStackNetworkInterface_basicWithNetworkSecurityGroup(rInt, location)
 	updatedConfig := testAccAzureStackNetworkInterface_basic(rInt, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -188,7 +122,7 @@ func TestAccAzureStackNetworkInterface_multipleSubnets(t *testing.T) {
 	location := testLocation()
 	config := testAccAzureStackNetworkInterface_multipleSubnets(rInt, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -218,7 +152,7 @@ func TestAccAzureStackNetworkInterface_multipleSubnetsPrimary(t *testing.T) {
 	config := testAccAzureStackNetworkInterface_multipleSubnets(rInt, location)
 	updatedConfig := testAccAzureStackNetworkInterface_multipleSubnetsUpdatedPrimary(rInt, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -250,7 +184,7 @@ func TestAccAzureStackNetworkInterface_multipleSubnetsPrimary(t *testing.T) {
 func TestAccAzureStackNetworkInterface_enableIPForwarding(t *testing.T) {
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -279,7 +213,7 @@ func TestAccAzureStackNetworkInterface_enableAcceleratedNetworking(t *testing.T)
 
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -308,7 +242,7 @@ func TestAccAzureStackNetworkInterface_multipleLoadBalancers(t *testing.T) {
 
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -335,7 +269,7 @@ func TestAccAzureStackNetworkInterface_applicationGateway(t *testing.T) {
 
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -359,7 +293,7 @@ func TestAccAzureStackNetworkInterface_applicationGateway(t *testing.T) {
 func TestAccAzureStackNetworkInterface_withTags(t *testing.T) {
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -396,7 +330,7 @@ func TestAccAzureStackNetworkInterface_bug7986(t *testing.T) {
 	t.Skip()
 
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -419,7 +353,7 @@ func TestAccAzureStackNetworkInterface_applicationSecurityGroups(t *testing.T) {
 
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -442,7 +376,7 @@ func TestAccAzureStackNetworkInterface_internalFQDN(t *testing.T) {
 
 	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
@@ -812,7 +746,7 @@ resource "azurestack_network_interface" "test" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -852,7 +786,7 @@ resource "azurestack_network_interface" "test" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1079,7 +1013,7 @@ resource "azurestack_application_gateway" "test" {
     backend_http_settings_name = "backend-http-1"
   }
 
-  tags {
+  tags = {
     environment = "tf01"
   }
 }
@@ -1115,7 +1049,7 @@ resource "azurestack_network_security_group" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -1154,7 +1088,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -1184,7 +1118,7 @@ resource "azurestack_network_interface" "test1" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1200,7 +1134,7 @@ resource "azurestack_network_interface" "test2" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

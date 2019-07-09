@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -21,7 +21,7 @@ func TestAccAzureStackLoadBalancerBackEndAddressPool_basic(t *testing.T) {
 		"/subscriptions/%s/resourceGroups/acctestRG-%d/providers/Microsoft.Network/loadBalancers/arm-test-loadbalancer-%d/backendAddressPools/%s",
 		subscriptionID, ri, ri, addressPoolName)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -49,7 +49,7 @@ func TestAccAzureStackLoadBalancerBackEndAddressPool_removal(t *testing.T) {
 	ri := acctest.RandInt()
 	addressPoolName := fmt.Sprintf("%d-address-pool", ri)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -65,46 +65,12 @@ func TestAccAzureStackLoadBalancerBackEndAddressPool_removal(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackLoadBalancerBackEndAddressPool_reapply(t *testing.T) {
-	var lb network.LoadBalancer
-	ri := acctest.RandInt()
-	addressPoolName := fmt.Sprintf("%d-address-pool", ri)
-
-	deleteAddressPoolState := func(s *terraform.State) error {
-		return s.Remove("azurestack_lb_backend_address_pool.test")
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackLoadBalancerBackEndAddressPool_basic(ri, addressPoolName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerBackEndAddressPoolExists(addressPoolName, &lb),
-					deleteAddressPoolState,
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccAzureStackLoadBalancerBackEndAddressPool_basic(ri, addressPoolName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerBackEndAddressPoolExists(addressPoolName, &lb),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackLoadBalancerBackEndAddressPool_disappears(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()
 	addressPoolName := fmt.Sprintf("%d-address-pool", ri)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,

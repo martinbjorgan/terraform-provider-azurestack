@@ -15,7 +15,7 @@ func TestAccAzureStackRouteTable_basic(t *testing.T) {
 	resourceName := "azurestack_route_table.test"
 	ri := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -40,7 +40,7 @@ func TestAccAzureStackRouteTable_complete(t *testing.T) {
 	resourceName := "azurestack_route_table.test"
 	ri := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -65,7 +65,7 @@ func TestAccAzureStackRouteTable_update(t *testing.T) {
 	resourceName := "azurestack_route_table.test"
 	ri := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -92,7 +92,7 @@ func TestAccAzureStackRouteTable_singleRoute(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackRouteTable_singleRoute(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -118,7 +118,7 @@ func TestAccAzureStackRouteTable_removeRoute(t *testing.T) {
 	config := testAccAzureStackRouteTable_singleRoute(ri, testLocation())
 	updatedConfig := testAccAzureStackRouteTable_singleRouteRemoved(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -146,7 +146,7 @@ func TestAccAzureStackRouteTable_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackRouteTable_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -169,7 +169,7 @@ func TestAccAzureStackRouteTable_withTags(t *testing.T) {
 	preConfig := testAccAzureStackRouteTable_withTags(ri, testLocation())
 	postConfig := testAccAzureStackRouteTable_withTagsUpdate(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -201,7 +201,7 @@ func TestAccAzureStackRouteTable_multipleRoutes(t *testing.T) {
 	preConfig := testAccAzureStackRouteTable_singleRoute(ri, testLocation())
 	postConfig := testAccAzureStackRouteTable_multipleRoutes(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -243,7 +243,7 @@ func TestAccAzureStackRouteTable_withTagsSubnet(t *testing.T) {
 	configSetup := testAccAzureStackRouteTable_withTagsSubnet(ri, testLocation())
 	configTest := testAccAzureStackRouteTable_withAddTagsSubnet(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -425,7 +425,8 @@ resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  route               = []
+
+  route = []
 }
 `, rInt, location, rInt)
 }
@@ -475,7 +476,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -501,7 +502,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -514,7 +515,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -525,7 +526,7 @@ resource "azurestack_virtual_network" "test" {
   resource_group_name = "${azurestack_resource_group.test.name}"
   address_space       = ["10.0.0.0/16"]
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -549,7 +550,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -562,7 +563,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "staging"
     cloud       = "Azure"
   }
@@ -574,7 +575,7 @@ resource "azurestack_virtual_network" "test" {
   resource_group_name = "${azurestack_resource_group.test.name}"
   address_space       = ["10.0.0.0/16"]
 
-  tags {
+  tags = {
     environment = "staging"
     cloud       = "Azure"
   }
@@ -599,7 +600,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "staging"
     cloud       = "Azure"
   }
